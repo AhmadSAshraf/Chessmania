@@ -1,0 +1,182 @@
+.tournaments-types-nav {
+    display: flex;
+    align-self: center;
+    margin: 10px;
+
+    h4 {
+        margin: 0px;
+        padding: 5px 25px 5px;
+        text-align: center;
+        box-shadow: 0px 1px 4px $color2;
+        border-width: 1px;
+    }
+}
+
+.tour-list-instruction {
+    align-self: center;
+    text-align: center;
+    padding: 20px;
+    margin: 10px;
+}
+
+.tour-type {
+    margin-left: 10px;
+    margin-right: 10px;
+    border-width: 1px;
+    background-color: $color1;
+
+    &:hover {
+        cursor: pointer;
+        background-color: $color3;
+        transition: all 0.25s;
+    }
+}
+
+.tour-type-active {
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: $color2;
+    color: $color1;
+    border-width: 1px;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.match-result-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 15px 0;
+
+    button {
+        align-self: center;
+    }
+}
+
+.match-player-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 250px;
+    width: 200px;
+    text-align: center;
+
+    img {
+        height: 125px;
+        border-radius: 50%;
+        margin: 0 0 30px;
+    }
+
+    span {
+        padding: 10px 0px;
+    }
+}
+
+.result-point {
+    padding: 0 10px;
+}
+
+.winner {
+    background-color: $color4;
+    padding: 0 15px;
+    margin: 0 0.5vw;
+    border-radius: 20px;
+    box-shadow: 0px 1px 4px $color2;
+}
+
+.winner-locked {
+    background-color: $color4;
+    padding: 0 15px;
+    margin: 0 0.5vw;
+    border-radius: 20px;
+    box-shadow: 0px 1px 4px $color2;
+}
+
+.loser {
+    background-color: $color5;
+    padding: 0 15px;
+    margin: 0 0.5vw;
+    border-radius: 20px;
+    box-shadow: 0px 1px 4px $color2;
+    animation: glowingAnimation 4s ease infinite;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.loser-locked {
+    background-color: $color5;
+    padding: 0 15px;
+    margin: 0 0.5vw;
+    border-radius: 20px;
+    box-shadow: 0px 1px 4px $color2;
+}
+
+.draw {
+    background-color: $color6;
+    padding: 0 15px;
+    margin: 0 0.5vw;
+    border-radius: 20px;
+    box-shadow: 0px 1px 4px $color2;
+    animation: glowingAnimation 4s ease infinite;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.draw-locked {
+    background-color: $color6;
+    padding: 0 15px;
+    margin: 0 0.5vw;
+    border-radius: 20px;
+    box-shadow: 0px 1px 4px $color2;
+}
+
+.to-be-played {
+    padding: 0 15px;
+    margin: 0 0.5vw;
+    border-radius: 20px;
+    box-shadow: 0px 1px 4px $color2;
+    animation: glowingAnimation 4s ease infinite;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.draw-btn-open {
+    margin: 10px 10px;
+    padding: 10px 10px;
+    border-radius: 4px;
+    box-shadow: 0px 1px 4px $color2;
+    animation: glowingAnimation 4s ease infinite;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.draw-btn-closed {
+    margin: 10px 10px;
+    padding: 10px 10px;
+    border-radius: 4px;
+    box-shadow: 0px 1px 4px $color2;
+}
+
+.draw-btn-locked {
+    margin: 10px 10px;
+    padding: 10px 10px;
+    border-radius: 4px;
+    box-shadow: 0px 1px 4px $color2;
+}
+
+.result-point {
+    font-weight: 500;
+    font-size: 3rem;
+    margin: 0 0.5vw;
+}
