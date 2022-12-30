@@ -9,4 +9,14 @@ import Spinner from '../components/Spinner';
 
 const Profile = () => {
 
+
+
 }
+
+useEffect(() => {
+    if (loading) {
+        axios.get(`/api/profile/`).then((response) => {
+            setProfile(response.data[0])
+            setLoading(false)
+        })
+    };;
