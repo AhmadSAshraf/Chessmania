@@ -74,4 +74,3 @@ const BasePage = ({ main }) => {
 }
 
 export default BasePage
-ePage

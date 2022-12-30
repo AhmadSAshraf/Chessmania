@@ -29,4 +29,4 @@ const Footer = ({ footerClass }) => {
 };
 
 export default Footer;
-default Footer;
+
