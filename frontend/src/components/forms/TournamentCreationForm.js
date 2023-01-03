@@ -35,6 +35,39 @@ const TournamentCreationForm = ({ playersOptions }) => {
         resolver: yupResolver(schema)
     });
 
+    const [lockedError, setLockedError] = useState('')
+    const axios = useAxios()
+    const navigate = useNavigate();
+
+    const submitWithoutLocking = async (data) => {
+        let locked = false
+        await postData(data, locked)
+    }
+
+    const submitWithLocking = async (data) => {
+        if (data.players_list.length !== 8) {
+            return setLockedError('8 players are required to lock the tournament.')
+        } else {
+            let locked = true
+            await postData(data, locked)
+        }
+    }
+
+    const getCleanedData = (data, locked) => {
+        let cleanedData = {}
+        data.tournament_date.setDate(data.tournament_date.getDate() + 1);
+        cleanedData.tournament_date = data.tournament_date.toISOString().split('T')[0]
+        cleanedData.name = data.name
+        cleanedData.players_list = []
+        data.players_list.map(player => {
+            return cleanedData.players_list.push(player.value)
+        })
+        cleanedData.locked = locked
+        return cleanedData
+    }
+
+
+
 
 
 
