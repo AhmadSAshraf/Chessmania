@@ -25,7 +25,6 @@ const schema = yup.object().shape({
 /**
  * Tournament post form component to be displayed inside a modal.
  */
-
 const TournamentCreationForm = ({ playersOptions }) => {
     const { register, handleSubmit, control, formState: { errors, isSubmitting } } = useForm({
         defaultValues: {
@@ -34,7 +33,6 @@ const TournamentCreationForm = ({ playersOptions }) => {
         },
         resolver: yupResolver(schema)
     });
-
     const [lockedError, setLockedError] = useState('')
     const axios = useAxios()
     const navigate = useNavigate();
@@ -66,9 +64,73 @@ const TournamentCreationForm = ({ playersOptions }) => {
         return cleanedData
     }
 
+    const postData = async (data, locked) => {
+        let cleanedData = getCleanedData(data, locked)
+        let response = await axios.post('/api/tournaments/', cleanedData)
+        navigate(`/tournaments/${response.data.number}/`)
+    }
 
+    return (
 
+        <form>
+            <div className='input-set'>
+                <span className='input-name'>Last name :</span>
+                <input
+                    type='text'
+                    name='name'
+                    {...register('name')}
+                />
+                <span className='input-error'>{errors.name?.message}</span>
+            </div>
 
+            <div className='input-set'>
+                <span className='input-name'>Date :</span>
+                <input
+                    type='date'
+                    name='tournament_date'
+                    {...register('tournament_date')}
+                />
+                <span className='input-error'>{errors.tournament_date?.message}</span>
+            </div>
 
+            <div className='input-set'>
+                <span className='input-name'>Players :</span>
+                <Controller
+                    name="players_list"
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                        <Select
+                            value={value}
+                            onChange={onChange}
+                            options={playersOptions}
+                            isMulti
+                        />
+                    )}
+                />
+                <span className='input-error'>{errors.players_list?.message}</span>
+            </div>
 
+            <div className='submit-set'>
+                <div className='multi-submit'>
+                    <input
+                        className='green-btn'
+                        disabled={isSubmitting}
+                        onClick={handleSubmit(submitWithoutLocking)}
+                        type='submit'
+                        value="To create"
+                    />
+                    <input
+                        className='green-btn'
+                        disabled={isSubmitting}
+                        onClick={handleSubmit(submitWithLocking)}
+                        type='submit'
+                        value="Create and lock"
+                    />
+                </div>
+                {lockedError && <span className='input-error'>{lockedError}</span>}
+            </div>
+        </form>
+    );
 };
+
+export default TournamentCreationForm;
