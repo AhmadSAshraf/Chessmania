@@ -25,3 +25,17 @@ const schema = yup.object().shape({
 /**
  * Tournament post form component to be displayed inside a modal.
  */
+
+const TournamentCreationForm = ({ playersOptions }) => {
+    const { register, handleSubmit, control, formState: { errors, isSubmitting } } = useForm({
+        defaultValues: {
+            tournament_date: new Date().toISOString().split('T')[0],
+            players_list: []
+        },
+        resolver: yupResolver(schema)
+    });
+
+
+
+
+};
