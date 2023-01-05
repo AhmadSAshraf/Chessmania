@@ -497,3 +497,70 @@ class Match(models.Model):
         null=True,
         choices=RESULT_CHOICES
     )
+
+
+    class Meta:
+        verbose_name = 'Match'
+        verbose_name_plural = 'Matches'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__original_played = self.played
+
+    def __str__(self):
+        return f'Match {self.number}'
+
+    def check_results(self):
+        """
+        Checks if the entered results are valid.
+        """
+        if self.result_participant_1 and self.result_participant_2:
+            res_sum = self.result_participant_1 + self.result_participant_2
+            if res_sum != 1:
+                raise APIException400('Points sum must be equal to 1.')
+
+    def finalize_match(self):
+        """
+        Finalize a played match by updating the two participants total_points
+        and the round finished_matches field.
+        """
+        if type(self.result_participant_1 and
+                self.result_participant_2) == float:
+            self.update_participants_total_points()
+            self.round.finished_matches += 1
+            self.round.save()
+        else:
+            raise APIException400('Results must be entered before locking.')
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        """
+        Custom save allowing to only modify not played match. Checks the
+        validity of the results format and finalize the match if needed.
+        """
+        if self.__original_played:
+            raise APIException400('Match has already been played.')
+        else:
+            self.check_results()
+            if self.played:
+                self.finalize_match()
+            super().save()
+
+    def update_participants_total_points(self):
+        results = (
+            {
+                "participant_number": self.number_participant_1,
+                "point": self.result_participant_1
+            },
+            {
+                "participant_number": self.number_participant_2,
+                "point": self.result_participant_2
+            }
+        )
+        for result in results:
+            participant = Participant.objects.get(
+                tournament=self.tournament,
+                number=result["participant_number"]
+            )
+            participant.total_points += result["point"]
+            participant.save()
