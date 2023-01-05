@@ -330,3 +330,28 @@ class Round(models.Model):
         editable=False,
         default=list,
     )
+
+    class Meta:
+        verbose_name = 'Round'
+
+    def __str__(self):
+        return f'Round {self.number}'
+
+    def initialize_matches(self):
+        """
+        Creates all round's matches based on the paired_participants.
+        Triggered by the tournament.
+        """
+        self.participants_pairs = self.match_participants()
+        self.save()
+        for number, pair in enumerate(self.participants_pairs, 1):
+            Match.objects.create(
+                number=number,
+                tournament=self.tournament,
+                round=self,
+                number_participant_1=pair[0],
+                number_participant_2=pair[1],
+            )
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
