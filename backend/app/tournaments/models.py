@@ -355,3 +355,76 @@ class Round(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
+        """
+        Custom save method checking if a round is finished or not. Updates and
+        save the corresponding tournament accordingly.
+        """
+        participants = self.tournament.get_participants()
+        matches_number = len(participants) // 2
+        if self.finished_matches == matches_number:
+            self.tournament.finished_rounds += 1
+            self.tournament.save()
+        super().save()
+
+    def match_participants(self):
+        """
+        Initializes participants pairing by checking which pairing methods
+        must be executed, depending on the round number.
+        """
+        pairs_list = []
+        sorted_participants = self.tournament.sort_participants(numbers=True)
+        if self.number == 1:
+            pairs_list = self.get_first_round_pairs(
+                pairs_list,
+                sorted_participants
+            )
+        else:
+            pairs_list = self.get_last_rounds_pairs(
+                pairs_list,
+                sorted_participants
+            )
+        return pairs_list
+    @staticmethod
+    def get_first_round_pairs(pairs_list, participants):
+        """
+        Pairing method executed for first round. Cut a sorted participants list
+        in two lists and pairsparticipants sharing the same index.
+        """
+        half = len(participants) // 2
+        for i in range(half):
+            pair = [
+                participants[i],
+                participants[i + half]
+            ]
+            pairs_list.append(pair)
+        return pairs_list
+
+    def get_last_rounds_pairs(self, pairs_list, participants):
+        """
+        Pairing method executed for all rounds except first round. For a sorted
+        participants list, pairs the first participant with the second. If they
+         already played before, pairs the first with the third and so on...
+        """
+        previous_pairs = self.get_previous_participants_pairs()
+        n = 1
+        try:
+            while len(participants) > 0:
+                pair = [
+                    participants[0],
+                    participants[0 + n]
+                ]
+                if pair in previous_pairs or pair[::-1] in previous_pairs:
+                    n += 1
+                else:
+                    pairs_list.append(pair)
+                    participants = [participant for participant in participants
+                                    if participant not in pair]
+                    n = 1
+        except IndexError:
+            pairs_list.append(
+                (
+                    participants[0],
+                    participants[1]
+                )
+            )
+        return pairs_list
