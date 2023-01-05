@@ -61,4 +61,29 @@ class ChessBaseViewset(viewsets.ModelViewSet):
             raise APIException404("Round does not exist.")
         return round_obj
 
+class TournamentViewset(viewsets.ModelViewSet):
+    """
+    View managing tournament CRUD.
+    """
+    permission_classes = [IsAuthenticated, TournamentAccess]
+    lookup_field = 'number'
+    pagination_class = CustomPagination
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = TournamentFilter
 
+    def get_queryset(self):
+        queryset = Tournament.objects.filter(
+            creator=self.request.user.profile
+        ).order_by('number')
+        return queryset
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return TournamentListSerializer
+        else:
+            return TournamentDetailSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['profile'] = self.request.user.profile
+        return context
