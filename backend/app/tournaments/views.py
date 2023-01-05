@@ -112,3 +112,55 @@ class RoundViewset(ChessBaseViewset):
             return RoundListSerializer
         else:
             return RoundDetailSerializer
+class MatchViewset(ChessBaseViewset):
+    """
+    View managing match CRUD.
+    """
+    http_method_names = ['get', 'put', 'patch', 'head', 'options', 'trace']
+    permission_classes = [IsAuthenticated, MatchAccess]
+    lookup_field = 'number'
+
+    def initial(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            self.tournament = self.get_tournament()
+            self.round_obj = self.get_round()
+        super().initial(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = Match.objects.filter(
+            tournament=self.tournament,
+            round=self.round_obj
+        ).order_by('number')
+        return queryset
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return MatchListSerializer
+        else:
+            return MatchDetailSerializer
+
+
+class ParticipantViewset(ChessBaseViewset):
+    """
+    View managing participant CRUD. Only 'read' is allowed.
+    """
+    http_method_names = ['get', 'head', 'options', 'trace']
+    permission_classes = [IsAuthenticated, ParticipantAccess]
+    lookup_field = 'number'
+
+    def initial(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            self.tournament = self.get_tournament()
+        super().initial(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = Participant.objects.filter(
+            tournament=self.tournament
+        ).order_by('number')
+        return queryset
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ParticipantListSerializer
+        else:
+            return ParticipantDetailSerializer
