@@ -428,3 +428,72 @@ class Round(models.Model):
                 )
             )
         return pairs_list
+
+    def get_previous_participants_pairs(self):
+        """
+        Checks all the previous rounds participants pairs and return them in a
+        single list.
+        """
+        previous_participants_pairs = []
+        for number in range(1, self.number):
+            round_obj = Round.objects.get(
+                number=number,
+                tournament=self.tournament
+            )
+            previous_participants_pairs.extend(round_obj.participants_pairs)
+        return previous_participants_pairs
+
+
+class Match(models.Model):
+    """
+    A round match with two participants where a match result can be decided.
+    """
+    RESULT_CHOICES = (
+        (0, 0),
+        (0.5, 0.5),
+        (1, 1)
+    )
+    number = models.IntegerField(
+        editable=False,
+        blank=True,
+        null=True
+    )
+    tournament = models.ForeignKey(
+        to=Tournament,
+        on_delete=models.CASCADE,
+        editable=False,
+        blank=False,
+        null=False
+    )
+    round = models.ForeignKey(
+        to=Round,
+        on_delete=models.CASCADE,
+        editable=False,
+        blank=False,
+        null=False
+    )
+    played = models.BooleanField(
+        default=False,
+        blank=True,
+        null=True
+    )
+    number_participant_1 = models.IntegerField(
+        editable=False,
+        blank=True,
+        null=True
+    )
+    result_participant_1 = models.FloatField(
+        blank=True,
+        null=True,
+        choices=RESULT_CHOICES
+    )
+    number_participant_2 = models.IntegerField(
+        editable=False,
+        blank=True,
+        null=True
+    )
+    result_participant_2 = models.FloatField(
+        blank=True,
+        null=True,
+        choices=RESULT_CHOICES
+    )
