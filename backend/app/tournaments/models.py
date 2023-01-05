@@ -564,3 +564,47 @@ class Match(models.Model):
             )
             participant.total_points += result["point"]
             participant.save()
+
+
+class Participant(models.Model):
+    """
+    Instance linking a player to a tournament. Allows to retrieve a player's
+    rank at the moment of the tournament locking and to get a record of the
+    participant's total_points.
+    """
+    number = models.IntegerField(
+        editable=False,
+        blank=True,
+        null=True
+    )
+    tournament = models.ForeignKey(
+        to=Tournament,
+        on_delete=models.CASCADE,
+        editable=False,
+        blank=False,
+        null=False
+    )
+    player = models.ForeignKey(
+        to=Player,
+        on_delete=models.PROTECT,
+        editable=False,
+        blank=False,
+        null=False
+    )
+    rank = models.IntegerField(
+        editable=False,
+        blank=True,
+        null=True,
+    )
+    total_points = models.FloatField(
+        default=0,
+        editable=False,
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        verbose_name = 'Participant'
+
+    def __str__(self):
+        return f'Participant {self.number}'
