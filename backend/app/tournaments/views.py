@@ -87,3 +87,28 @@ class TournamentViewset(viewsets.ModelViewSet):
         context = super().get_serializer_context()
         context['profile'] = self.request.user.profile
         return context
+
+class RoundViewset(ChessBaseViewset):
+    """
+    View managing round CRUD. Only 'read' is allowed.
+    """
+    http_method_names = ['get', 'head', 'options', 'trace']
+    permission_classes = [IsAuthenticated, RoundAccess]
+    lookup_field = 'number'
+
+    def initial(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            self.tournament = self.get_tournament()
+        super().initial(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = Round.objects.filter(
+            tournament=self.tournament
+        ).order_by('number')
+        return queryset
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return RoundListSerializer
+        else:
+            return RoundDetailSerializer
